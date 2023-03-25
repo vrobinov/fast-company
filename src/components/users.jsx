@@ -1,45 +1,10 @@
-import React, {useState} from 'react';
-import api from '../api'
+import React from 'react';
+import User from './user';
 
-const Users = () => {
-    const [users, setUsers] = useState(api.users.fetchAll());
-    const handleDelete = (userId) => {
-        setUsers(prevState=>prevState.filter(user=> user !== userId))
-    };
-    const renderPhrase = (number) => {
-        if(number>=5 || number===1){
-            return <span className='badge bg-primary'>{number + ' человек тусанет с тобой сегодня' }</span>
-        } else if(number<=4 && number>=1){
-            return <span className='badge bg-primary'>{number + ' человека тусанут с тобой сегодня'}</span>
-        } else{
-            return <span className='badge bg-danger'>{'Никто не тусанет с тобой сегодня'}</span>
-        }
-    }
-    const rowUser = () => {
-        return(  
-        <>
-            {users.map(user=>(
-                <>
-                <tr key={user._id}>
-                <td>{user.name}</td>
-                <td>{user.qualities.map((quality) =>(
-                    <div className={'badge m-1 bg-'+ quality.color}>{quality.name}</div>// undefined
-                ))}</td>
-                <td>{user.profession.name}</td>
-                <td>{user.completedMeetings}</td>
-                <td>{user.rate}</td>
-                <button onClick={()=>handleDelete(user)} className='btn bg-danger'>delete</button>
-                </tr>
-                </>
-                ))
-            }
-            
-        </>
-        )
-    };
+const Users = ({users, ...rest}) => {  
     return (
         <>
-        {renderPhrase(users.length)}
+        {users.length > 0 && (
         <table className="table">
             <thead>
                 <tr>
@@ -48,14 +13,18 @@ const Users = () => {
                     <th className='m-2'>Проффессия</th>
                     <th className='m-2'>Встретился, раз</th>
                     <th className='m-2'>Оценка</th>
+                    <th className='m-2'>Избранное</th>
                 </tr>
             </thead>
             <tbody>
-                {rowUser()}
+                {users.map((user)=>(
+                    <User key={user._id} {...rest} {...user}/>
+                ))}
             </tbody>
         </table>
+        )}
     </>
-    )
-}
+    );
+};
 
 export default Users;
