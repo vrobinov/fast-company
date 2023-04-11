@@ -1,87 +1,106 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
-import User from "./user";
 import api from "../api";
 import PropTypes from "prop-types";
+import { isEqual, orderBy } from "lodash";
 import CroupList from "./groupList";
 import SearchStatus from "./searchStatus";
+import UserTable from "./usersTable";
 
-const Users = ({ users: allUsers, ...rest }) => {
-    const pageSize = 2;
+const Users = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
-    const [selectedProf, setSelectedProf] = useState();
-    const [shifting, setShifting] = useState(true);
+    const [selectedProf, setSelectedProf] = useState(null);
+    const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
+    const [users, setUsers] = useState();
+    const pageSize = 8;
+
     useEffect(() => {
         api.professions.fetchAll().then((data) => {
             setProfession(data);
-            setShifting(false);
         });
     }, []);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf]);
+
+    useEffect(() => {
+        api.users.fetchAll().then((data) => {
+            setUsers(data);
+        });
+    }, []);
+
+    const handleDelete = (userId) => {
+        const newUser = users.filter((u) => u._id !== userId);
+        setUsers(newUser);
+    };
+
+    const hundleToggleBookmark = (id) => {
+        const bookmark = users.map((mark) => {
+            if (mark._id === id) {
+                return { ...mark, bookmark: !mark.bookmark };
+            }
+            return mark;
+        });
+        setUsers(bookmark);
+    };
+
     const handleProfessionsSelect = (item) => {
         setSelectedProf(item);
     };
+
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
-    const filteredUsers = selectedProf ? allUsers.filter((user) => user.profession === selectedProf) : allUsers;
-    const count = filteredUsers.length;
-    const userCrop = paginate(filteredUsers, currentPage, pageSize);
-    const clearFilter = () => {
-        setSelectedProf();
+
+    const handleSort = (item) => {
+        setSortBy(item);
     };
-    return (
-        <div className="d-flex">
-            {!shifting && Object.keys(professions).length !== 0 && (
-                <div className="d-flex flex-column flex-schrink-0 p-3">
-                    <CroupList
-                        selectedItem={selectedProf}
-                        items={professions}
-                        onItemSelect={handleProfessionsSelect}
-                    />
-                    <button
-                        className="btn btn-secondary mt-2"
-                        onClick={clearFilter}
-                    >Очистить
-                    </button>
-                </div>
-            )}
-            <div className="d-flex flex-column">
-                <SearchStatus length={count} />
-                {count > 0 && (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th className="m-2">Имя</th>
-                                <th className="m-2">Качества</th>
-                                <th className="m-2">Проффессия</th>
-                                <th className="m-2">Встретился, раз</th>
-                                <th className="m-2">Оценка</th>
-                                <th className="m-2">Избранное</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userCrop.map((user) => (
-                                <User key={user._id} {...rest} {...user} />
-                            ))}
-                        </tbody>
-                    </table>
+
+    if (users) {
+        const filteredUsers = selectedProf ? users.filter((user) => isEqual(user.profession, selectedProf)) : users;
+        const count = filteredUsers.length;
+        const sortedUsers = orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
+        const userCrop = paginate(sortedUsers, currentPage, pageSize);
+        const clearFilter = () => {
+            setSelectedProf(null);
+        };
+        return (
+            <div className="d-flex">
+                {professions && (
+                    <div className="d-flex flex-column flex-schrink-0 p-3">
+                        <CroupList
+                            selectedItem={selectedProf}
+                            items={professions}
+                            onItemSelect={handleProfessionsSelect}
+                        />
+                        <button
+                            className="btn btn-secondary mt-2"
+                            onClick={clearFilter}
+                        >Очистить
+                        </button>
+                    </div>
                 )}
-                <div className="d-flex justify-content-center">
-                    <Pagination
-                        itemsCount={count}
-                        pageSize={pageSize}
-                        currentPage={currentPage}
-                        onPageChange={handlePageChange}
-                    />
+                <div className="d-flex flex-column">
+                    <SearchStatus length={count} />
+                    {count > 0 && (
+                        <UserTable users={userCrop} onSort={handleSort} selectedSort={sortBy} onDelete={handleDelete} onToggleBookmark={hundleToggleBookmark}/>
+                    )}
+                    <div className="d-flex justify-content-center">
+                        <Pagination
+                            itemsCount={count}
+                            pageSize={pageSize}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
+    return "loading...";
 };
 
 Users.propTypes = {
