@@ -8,7 +8,7 @@ import CroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
 
-const Users = () => {
+const UserList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState(null);
@@ -100,11 +100,11 @@ const Users = () => {
             </div>
         );
     }
-    return "loading...";
+    return <h2>Loading...</h2>;
 };
 
-Users.propTypes = {
+UserList.propTypes = {
     users: PropTypes.array
 };
 
-export default Users;
+export default UserList;
