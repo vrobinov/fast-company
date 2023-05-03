@@ -7,13 +7,15 @@ import { isEqual, orderBy } from "lodash";
 import CroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
+import SearchPerson from "./searchPerson";
 
 const UserList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState(null);
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-    const [users, setUsers] = useState();
+    const [users, setUsers] = useState([]);
+    const [search, setSearch] = useState("");
     const pageSize = 8;
 
     useEffect(() => {
@@ -32,6 +34,10 @@ const UserList = () => {
         });
     }, []);
 
+    const clearSearch = () => {
+        setSearch("");
+    };
+
     const handleDelete = (userId) => {
         const newUser = users.filter((u) => u._id !== userId);
         setUsers(newUser);
@@ -48,6 +54,7 @@ const UserList = () => {
     };
 
     const handleProfessionsSelect = (item) => {
+        clearSearch();
         setSelectedProf(item);
     };
 
@@ -60,12 +67,26 @@ const UserList = () => {
     };
 
     if (users) {
-        const filteredUsers = selectedProf ? users.filter((user) => isEqual(user.profession, selectedProf)) : users;
+        const filteredUsers = selectedProf
+            ? users.filter((user) => isEqual(user.profession, selectedProf))
+            : users.filter((user) => user.name.includes(search));
         const count = filteredUsers.length;
-        const sortedUsers = orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
+        const sortedUsers = orderBy(
+            filteredUsers,
+            [sortBy.path, "name"],
+            [sortBy.order]
+        );
+
         const userCrop = paginate(sortedUsers, currentPage, pageSize);
         const clearFilter = () => {
             setSelectedProf(null);
+        };
+        const handleSearch = (e) => {
+            if (selectedProf) {
+                clearFilter();
+            }
+            const value = e.target.value;
+            setSearch(value);
         };
         return (
             <div className="d-flex">
@@ -79,14 +100,25 @@ const UserList = () => {
                         <button
                             className="btn btn-secondary mt-2"
                             onClick={clearFilter}
-                        >Очистить
+                        >
+                            Очистить
                         </button>
                     </div>
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <SearchPerson
+                        search={search}
+                        onSearch={handleSearch}
+                    />
                     {count > 0 && (
-                        <UserTable users={userCrop} onSort={handleSort} selectedSort={sortBy} onDelete={handleDelete} onToggleBookmark={hundleToggleBookmark}/>
+                        <UserTable
+                            users={userCrop}
+                            onSort={handleSort}
+                            selectedSort={sortBy}
+                            onDelete={handleDelete}
+                            onToggleBookmark={hundleToggleBookmark}
+                        />
                     )}
                     <div className="d-flex justify-content-center">
                         <Pagination
