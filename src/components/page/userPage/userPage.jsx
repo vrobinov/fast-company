@@ -23,7 +23,7 @@ const UserPage = (props) => {
 };
 
 const View = ({ user }) => {
-    const { name, profession, qualities, completedMeetings, rate } = user;
+    const { _id, name, profession, qualities, completedMeetings, rate } = user;
     const history = useHistory();
     return (
         <>
@@ -32,9 +32,8 @@ const View = ({ user }) => {
                     <h5 className="card-title">{name}</h5>
                     <p className="card-text">Профессия:{profession.name}</p>
                     <p className="card-text">
-                        {qualities.map((item) => (
-                            <Qualities key={item._id} {...item} />
-                        ))}
+                        <span className="fw-bolder">Качества:</span>
+                        {<Qualities qualities={qualities} />}
                     </p>
                     <p className="card-text">
                         Встретился, раз:{completedMeetings}
@@ -45,10 +44,10 @@ const View = ({ user }) => {
             <button
                 className="btn btn-primary"
                 onClick={() => {
-                    history.replace("/users");
+                    history.push(`/users/${_id}/edit`);
                 }}
             >
-                Все пользователи
+                Изменить
             </button>
         </>
     );
