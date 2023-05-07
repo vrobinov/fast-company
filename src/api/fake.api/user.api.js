@@ -146,13 +146,13 @@ const users = [{
 
 const fetchAll = () =>
     new Promise((resolve) => {
-        window.setTimeout(() => resolve(users), 1000);
+        window.setTimeout(() => resolve(users), 500);
     });
 const getById = (id) =>
     new Promise((resolve) => {
         window.setTimeout(
             () => resolve(users.find((user) => user._id === id)),
-            1000
+            500
         );
     });
 

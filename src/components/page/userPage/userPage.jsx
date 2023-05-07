@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
-import api from "../api";
-import Quality from "./qualitie";
+import api from "../../../api";
+import Qualities from "../../ui/qualities";
 
 const UserPage = (props) => {
     const { userId } = props;
@@ -15,7 +15,7 @@ const UserPage = (props) => {
             setUser(data);
             setShifting(false);
         });
-    }, [userId]);
+    }, []);
 
     const content = !user || shifting ? <h2>Loading</h2> : <View user={user} />;
 
@@ -33,7 +33,7 @@ const View = ({ user }) => {
                     <p className="card-text">Профессия:{profession.name}</p>
                     <p className="card-text">
                         {qualities.map((item) => (
-                            <Quality key={item._id} {...item} />
+                            <Qualities key={item._id} {...item} />
                         ))}
                     </p>
                     <p className="card-text">

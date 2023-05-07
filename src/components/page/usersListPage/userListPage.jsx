@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import Pagination from "./pagination";
-import { paginate } from "../utils/paginate";
-import api from "../api";
+import Pagination from "../../common/pagination";
+import { paginate } from "../../../utils/paginate";
+import api from "../../../api";
 import PropTypes from "prop-types";
 import { isEqual, orderBy } from "lodash";
-import CroupList from "./groupList";
-import SearchStatus from "./searchStatus";
-import UserTable from "./usersTable";
-import SearchPerson from "./searchPerson";
+import CroupList from "../../common/groupList";
+import SearchStatus from "../../ui/searchStatus";
+import UserTable from "../../ui/usersTable";
+import SearchPerson from "../../ui/searchPerson";
 
-const UserList = () => {
+const UserListPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState(null);
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState();
     const [search, setSearch] = useState("");
     const pageSize = 8;
 
@@ -107,10 +107,7 @@ const UserList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
-                    <SearchPerson
-                        search={search}
-                        onSearch={handleSearch}
-                    />
+                    <SearchPerson search={search} onSearch={handleSearch} />
                     {count > 0 && (
                         <UserTable
                             users={userCrop}
@@ -135,8 +132,8 @@ const UserList = () => {
     return <h2>Loading...</h2>;
 };
 
-UserList.propTypes = {
+UserListPage.propTypes = {
     users: PropTypes.array
 };
 
-export default UserList;
+export default UserListPage;
