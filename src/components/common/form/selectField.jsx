@@ -31,7 +31,7 @@ const SelectField = ({
             <select
                 className={getInputClasses()}
                 id={name}
-                name="profession"
+                name={name}
                 value={value}
                 onChange={handleChange}
             >
@@ -40,7 +40,7 @@ const SelectField = ({
                 </option>
                 {optionsArray &&
                     optionsArray.map((option) => (
-                        <option value={option.value} key={option.value}>
+                        <option value={option._id} key={option._id}>
                             {option.name}
                         </option>
                     ))}

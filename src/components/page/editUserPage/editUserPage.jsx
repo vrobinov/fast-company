@@ -73,7 +73,6 @@ const EditUserPage = ({ userId }) => {
     };
     const handleChange = (target) => {
         let value = target.value;
-        console.log(target.value.name);
         if (target.name === "profession") {
             value = {
                 _id: target.value,
