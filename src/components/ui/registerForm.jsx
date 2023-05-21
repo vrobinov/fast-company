@@ -28,6 +28,7 @@ const RegisterForm = () => {
         });
     }, []);
     const handleChange = (target) => {
+        console.log(target);
         setData((prevState) => ({
             ...prevState,
             [target.name]: target.value
@@ -103,7 +104,7 @@ const RegisterForm = () => {
             <SelectField
                 label="Выбери свою профессию"
                 defaultOption="Choose..."
-                name="professions"
+                name="profession"
                 options={professions}
                 onChange={handleChange}
                 value={data.profession}
