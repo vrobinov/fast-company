@@ -7,6 +7,7 @@ import TextField from "../../common/form/textField";
 import SelectField from "../../common/form/selectField";
 import RadioField from "../../common/form/radioField";
 import MultiSelectField from "../../common/form/multiSelectField";
+import BackHistoryButton from "../../common/table/backButton";
 
 const EditUserPage = ({ userId }) => {
     const history = useHistory();
@@ -130,6 +131,7 @@ const EditUserPage = ({ userId }) => {
         <h2>Loading...</h2>
     ) : (
         <div className="container mt-5">
+            <BackHistoryButton />
             <div className="row">
                 <div className="col-md-6 offset-md-3 shadow p-4">
                     <form onSubmit={handleSubmit}>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import api from "../../../api";
-import Qualities from "../../ui/qualities";
+import UserCard from "../../ui/userCard";
+import QualitiesCard from "../../ui/qualitiesCard";
+import MeetingsCard from "../../ui/meetingsCard";
+import Comments from "../../ui/Comments";
 
 const UserPage = (props) => {
     const { userId } = props;
@@ -23,32 +25,20 @@ const UserPage = (props) => {
 };
 
 const View = ({ user }) => {
-    const { _id, name, profession, qualities, completedMeetings, rate } = user;
-    const history = useHistory();
     return (
         <>
-            <div className="card mb-3">
-                <div className="card-body">
-                    <h5 className="card-title">{name}</h5>
-                    <p className="card-text">Профессия:{profession.name}</p>
-                    <p className="card-text">
-                        <span className="fw-bolder">Качества:</span>
-                        {<Qualities qualities={qualities} />}
-                    </p>
-                    <p className="card-text">
-                        Встретился, раз:{completedMeetings}
-                    </p>
-                    <p className="card-text">Оценка:{rate}</p>
+            <div className="container">
+                <div className="row gutters-sm">
+                    <div className="col-md-4 mb-3">
+                        <UserCard user={user} />
+                        <QualitiesCard data={user.qualities} />
+                        <MeetingsCard value={user.completedMeetings} />
+                    </div>
+                    <div className="col-md-8">
+                        <Comments />
+                    </div>
                 </div>
             </div>
-            <button
-                className="btn btn-primary"
-                onClick={() => {
-                    history.push(`/users/${_id}/edit`);
-                }}
-            >
-                Изменить
-            </button>
         </>
     );
 };
