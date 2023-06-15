@@ -8,16 +8,18 @@ import CroupList from "../../common/groupList";
 import SearchStatus from "../../ui/searchStatus";
 import UserTable from "../../ui/usersTable";
 import SearchPerson from "../../ui/searchPerson";
+import { useUser } from "../../../hooks/useUsers";
 
 const UserListPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState(null);
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-    const [users, setUsers] = useState();
+
     const [search, setSearch] = useState("");
     const pageSize = 8;
-
+    const { users } = useUser();
+    console.log(users);
     useEffect(() => {
         api.professions.fetchAll().then((data) => {
             setProfession(data);
@@ -28,19 +30,20 @@ const UserListPage = () => {
         setCurrentPage(1);
     }, [selectedProf]);
 
-    useEffect(() => {
-        api.users.fetchAll().then((data) => {
-            setUsers(data);
-        });
-    }, []);
+    // useEffect(() => {
+    //     api.users.fetchAll().then((data) => {
+    //         setUsers(data);
+    //     });
+    // }, []);
 
     const clearSearch = () => {
         setSearch("");
     };
 
     const handleDelete = (userId) => {
-        const newUser = users.filter((u) => u._id !== userId);
-        setUsers(newUser);
+        // const newUser = users.filter((u) => u._id !== userId);
+        // setUsers(newUser);
+        console.log(userId);
     };
 
     const hundleToggleBookmark = (id) => {
@@ -50,7 +53,8 @@ const UserListPage = () => {
             }
             return mark;
         });
-        setUsers(bookmark);
+        // setUsers(bookmark);
+        console.log(bookmark);
     };
 
     const handleProfessionsSelect = (item) => {
