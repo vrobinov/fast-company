@@ -73,7 +73,9 @@ const UserListPage = () => {
     if (users) {
         const filteredUsers = selectedProf
             ? users.filter((user) => isEqual(user.profession, selectedProf))
-            : users.filter((user) => user.name.includes(search));
+            : users.filter((user) =>
+                user.name?.toLowerCase().includes(search.toLowerCase())
+            );
         const count = filteredUsers.length;
         const sortedUsers = orderBy(
             filteredUsers,
