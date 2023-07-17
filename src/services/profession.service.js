@@ -1,6 +1,7 @@
 import httpService from "./http.service";
 
 const professionEndpoint = "profession/";
+
 const professionService = {
     get: async () => {
         const {
@@ -9,5 +10,4 @@ const professionService = {
         return data;
     }
 };
-
 export default professionService;

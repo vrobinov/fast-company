@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import professionService from "../services/profession.service";
+import ProfessionService from "../services/profession.service";
 import { toast } from "react-toastify";
+
 const ProfessionContext = React.createContext();
+
 export const useProfessions = () => {
     return useContext(ProfessionContext);
 };
@@ -17,25 +19,28 @@ export const ProfessionProvider = ({ children }) => {
             setError(null);
         }
     }, [error]);
+
     useEffect(() => {
         getProfessionsList();
     }, []);
+    function errorCatcher(error) {
+        const { message } = error.response.data;
+        setError(message);
+    }
+    function getProfession(id) {
+        return professions.find((p) => p._id === id);
+    }
+
     async function getProfessionsList() {
         try {
-            const { content } = await professionService.get();
+            const { content } = await ProfessionService.get();
             setProfessions(content);
             setLoading(false);
         } catch (error) {
             errorCatcher(error);
         }
     }
-    function getProfession(id) {
-        return professions.find((p) => p._id === id);
-    }
-    function errorCatcher(error) {
-        const { message } = error.responce.data;
-        setError(message);
-    }
+
     return (
         <ProfessionContext.Provider
             value={{ isLoading, professions, getProfession }}
@@ -44,6 +49,7 @@ export const ProfessionProvider = ({ children }) => {
         </ProfessionContext.Provider>
     );
 };
+
 ProfessionProvider.propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.node),

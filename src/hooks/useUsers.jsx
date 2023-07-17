@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import userService from "../services/user.service";
 import { toast } from "react-toastify";
-
+import { useAuth } from "./useAuth";
 const UserContext = React.createContext();
 
 export const useUser = () => {
@@ -13,6 +13,7 @@ const UserProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { currentUser } = useAuth();
     useEffect(() => {
         getUsers();
     }, []);
@@ -25,7 +26,6 @@ const UserProvider = ({ children }) => {
     async function getUsers() {
         try {
             const { content } = await userService.get();
-            console.log(content);
             setUsers(content);
             setLoading(false);
         } catch (error) {
@@ -33,20 +33,34 @@ const UserProvider = ({ children }) => {
         }
     }
     function errorCatcher(error) {
-        const { message } = error.responce.data;
+        const { message } = error.response.data;
         setError(message);
-        // setLoading(false);
+        setLoading(false);
     }
+    function getUserById(userId) {
+        return users.find((u) => u._id === userId);
+    }
+    useEffect(() => {
+        if (!isLoading) {
+            setUsers([
+                ...users.filter((user) => user._id !== currentUser._id),
+                currentUser
+            ]);
+        }
+        // eslint-disable-next-line
+    }, [currentUser]);
     return (
-        <UserContext.Provider value={{ users }}>
+        <UserContext.Provider value={{ users, getUserById }}>
             {!isLoading ? children : "Loading..."}
         </UserContext.Provider>
     );
 };
+
 UserProvider.propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node
     ])
 };
+
 export default UserProvider;
